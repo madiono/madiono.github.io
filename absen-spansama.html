@@ -1,0 +1,2432 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Absen QR Spansama</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+  <style>
+    :root {
+      --primary: #1E8E5A;
+      --primary-hover: #177348;
+      --primary-light: #E6F5EE;
+      --bg: #F5F7FB;
+      --card: #FFFFFF;
+      --text: #1F2A44;
+      --text-muted: #5B6785;
+      --border: #E2E8F0;
+      --hadir: #2E9E6B;
+      --hadir-bg: #E6F6EF;
+      --terlambat: #8A5A00;
+      --terlambat-bg: #FFF4D6;
+      --izin: #2F56B0;
+      --izin-bg: #E3ECFF;
+      --sakit: #6A3FB8;
+      --sakit-bg: #EFE6FF;
+      --alfa: #D64545;
+      --alfa-bg: #FDECEC;
+      --belum: #5B6785;
+      --belum-bg: #E9EDF5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      font-size: 16px;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 12px;
+      min-height: 48px;
+      padding: 0 20px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background-color 0.15s, opacity 0.15s, transform 0.1s;
+    }
+
+    button:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #FFFFFF;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background-color: var(--belum-bg);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background-color: #DCE2EE;
+    }
+
+    .btn-danger {
+      background-color: var(--alfa);
+      color: #FFFFFF;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      background-color: #B93535;
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 2px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-outline:hover:not(:disabled) {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-sm {
+      min-height: 38px;
+      padding: 0 12px;
+      font-size: 14px;
+      border-radius: 8px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="date"],
+    input[type="month"],
+    select,
+    textarea {
+      width: 100%;
+      min-height: 48px;
+      padding: 10px 14px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background-color: #FFFFFF;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+    }
+
+    .card {
+      background-color: var(--card);
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(31, 42, 68, 0.05);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+    .badge-HADIR { background-color: var(--hadir-bg); color: var(--hadir); }
+    .badge-TERLAMBAT { background-color: var(--terlambat-bg); color: var(--terlambat); }
+    .badge-IZIN { background-color: var(--izin-bg); color: var(--izin); }
+    .badge-SAKIT { background-color: var(--sakit-bg); color: var(--sakit); }
+    .badge-ALFA { background-color: var(--alfa-bg); color: var(--alfa); }
+    .badge-BELUM { background-color: var(--belum-bg); color: var(--belum); }
+
+    /* Center Screens (Init, Error, Login) */
+    .center-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+    }
+
+    .logo-wrap {
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .logo-circle {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      color: #FFFFFF;
+      font-size: 32px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-sm {
+      width: 38px;
+      height: 38px;
+      flex-shrink: 0;
+    }
+
+    .logo-sm .logo-circle {
+      width: 38px;
+      height: 38px;
+      font-size: 18px;
+    }
+
+    /* App Layout */
+    .app-header {
+      background-color: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .header-title {
+      font-weight: 800;
+      font-size: 17px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .header-date {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .banner-warning {
+      background-color: var(--terlambat-bg);
+      color: var(--terlambat);
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      border-bottom: 1px solid #F3DF9E;
+    }
+
+    .app-body {
+      display: flex;
+      min-height: calc(100vh - 65px);
+    }
+
+    .sidebar {
+      width: 200px;
+      flex-shrink: 0;
+      background-color: var(--card);
+      border-right: 1px solid var(--border);
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      justify-content: flex-start;
+      background-color: transparent;
+      color: var(--text-muted);
+      padding: 0 14px;
+      border-radius: 12px;
+    }
+
+    .nav-btn:hover {
+      background-color: var(--bg);
+      color: var(--text);
+    }
+
+    .nav-btn.active {
+      background-color: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 20px;
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    @media (max-width: 768px) {
+      .app-body {
+        flex-direction: column;
+        padding-bottom: 76px;
+      }
+      .sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 68px;
+        flex-direction: row;
+        border-right: none;
+        border-top: 1px solid var(--border);
+        padding: 6px 8px;
+        z-index: 40;
+        justify-content: space-around;
+      }
+      .nav-btn {
+        flex-direction: column;
+        justify-content: center;
+        gap: 2px;
+        padding: 4px;
+        font-size: 12px;
+        min-height: 54px;
+      }
+      .main-content {
+        padding: 14px;
+      }
+    }
+
+    /* Scan Page */
+    .mode-switch {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .mode-switch button {
+      flex: 1;
+    }
+
+    .mode-banner {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 800;
+      padding: 10px;
+      border-radius: 12px;
+      background-color: var(--primary-light);
+      color: var(--primary);
+      margin-bottom: 14px;
+    }
+
+    .camera-box {
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto 14px;
+      aspect-ratio: 4 / 3;
+      background-color: #161D2E;
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .camera-box video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .scan-frame {
+      position: absolute;
+      width: 62%;
+      aspect-ratio: 1 / 1;
+      border: 3px solid rgba(255, 255, 255, 0.85);
+      border-radius: 18px;
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.38);
+      pointer-events: none;
+    }
+
+    .camera-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+
+    .yellow-alert {
+      background-color: var(--terlambat-bg);
+      color: var(--terlambat);
+      border: 1px solid #F0D999;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .yellow-alert small {
+      display: block;
+      margin-top: 6px;
+      opacity: 0.85;
+      font-weight: 700;
+    }
+
+    .scan-result-card {
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px;
+      text-align: center;
+      border: 2px solid transparent;
+    }
+
+    .scan-result-card.res-loading { background-color: var(--belum-bg); color: var(--text); }
+    .scan-result-card.res-hadir { background-color: var(--hadir-bg); color: var(--hadir); border-color: var(--hadir); }
+    .scan-result-card.res-terlambat { background-color: var(--terlambat-bg); color: var(--terlambat); border-color: #E5B94C; }
+    .scan-result-card.res-pulang { background-color: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+    .scan-result-card.res-sudah { background-color: var(--belum-bg); color: var(--text-muted); border-color: #CBD5E1; }
+    .scan-result-card.res-error { background-color: var(--alfa-bg); color: var(--alfa); border-color: var(--alfa); }
+
+    .scan-result-name {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .scan-result-sub {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      opacity: 0.9;
+    }
+
+    .scan-result-msg {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .manual-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 640px) {
+      .manual-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .inline-form {
+      display: flex;
+      gap: 8px;
+    }
+
+    .recent-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 8px;
+    }
+
+    .recent-item:last-child {
+      border-bottom: none;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: flex-end;
+      margin-bottom: 16px;
+    }
+
+    .filter-group {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .filter-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    /* Summary Grid */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .summary-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .stat-box {
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* Table */
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #FFFFFF;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 11px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background-color: #F8FAFC;
+      font-weight: 800;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr.row-warning {
+      background-color: var(--alfa-bg);
+    }
+
+    .wa-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 0 12px;
+      border-radius: 8px;
+      background-color: var(--hadir);
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 13px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .wa-btn.opened {
+      background-color: var(--belum-bg);
+      color: var(--text-muted);
+    }
+
+    /* Kartu QR Grid */
+    .qr-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 16px;
+    }
+
+    .student-card-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .id-card {
+      aspect-ratio: 86 / 54;
+      background-color: #FFFFFF;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 3px 10px rgba(31, 42, 68, 0.06);
+    }
+
+    .id-card-header {
+      background-color: var(--primary);
+      color: #FFFFFF;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .id-card-logo {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: #FFFFFF;
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .id-card-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .id-card-school {
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .id-card-addr {
+      font-size: 10px;
+      opacity: 0.9;
+      line-height: 1.2;
+    }
+
+    .id-card-body {
+      flex: 1;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .id-card-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .id-card-tag {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .id-card-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.25;
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+
+    .id-card-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .id-card-qr {
+      width: 88px;
+      height: 88px;
+      background-color: #FFFFFF;
+      padding: 4px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .id-card-qr img, .id-card-qr canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(15, 23, 42, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+    }
+
+    .modal-box {
+      background-color: #FFFFFF;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 460px;
+      padding: 22px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .status-picker {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .status-opt {
+      min-height: 44px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 800;
+      border: 2px solid var(--border);
+      background-color: #FFFFFF;
+      color: var(--text);
+    }
+
+    .status-opt.selected {
+      border-color: var(--primary);
+      background-color: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 84px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #1F2A44;
+      color: #FFFFFF;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      z-index: 200;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      max-width: 90vw;
+      text-align: center;
+    }
+
+    @media print {
+      body {
+        background-color: #FFFFFF !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .app-header, .sidebar, .banner-warning, .no-print, .card-action-link {
+        display: none !important;
+      }
+      .app-body {
+        display: block !important;
+        padding: 0 !important;
+      }
+      .main-content {
+        padding: 0 !important;
+      }
+      .qr-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 12px !important;
+      }
+      .student-card-wrap {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+      .id-card {
+        box-shadow: none !important;
+        border: 1px solid #94A3B8 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="modalRoot"></div>
+  <div id="toastRoot" class="toast hidden"></div>
+
+  <script>
+    const CONFIG = {
+      urlServer: "https://script.google.com/macros/s/AKfycbz9vkl2HTRoeOy-zK6C9I8ZklOMpSNI0UszuPW2eujKegpqxa6G_nglJUiK9gLYq6Op/exec",
+      namaAplikasi: "Absen QR Spansama",
+      warnaUtama: "hijau"
+    };
+
+    const WARNA_MAP = {
+      hijau: { main: "#1E8E5A", hover: "#177348", light: "#E6F5EE" },
+      biru: { main: "#3B6FE0", hover: "#2D59BC", light: "#EBF1FE" },
+      ungu: { main: "#7C3AED", hover: "#6328CA", light: "#F2EBFE" },
+      merah: { main: "#D64545", hover: "#B83535", light: "#FDECEC" },
+      oranye: { main: "#D97706", hover: "#B45309", light: "#FEF3C7" },
+      toska: { main: "#0D9488", hover: "#0F766E", light: "#E6F7F5" }
+    };
+
+    (function applyTheme() {
+      const key = String(CONFIG.warnaUtama || "hijau").toLowerCase().trim();
+      const theme = WARNA_MAP[key] || (key.startsWith("#") ? { main: key, hover: key, light: "#E6F5EE" } : WARNA_MAP.hijau);
+      const r = document.documentElement.style;
+      r.setProperty("--primary", theme.main);
+      r.setProperty("--primary-hover", theme.hover);
+      r.setProperty("--primary-light", theme.light);
+    })();
+
+    const state = {
+      info: null,
+      token: "",
+      tanggalServer: "",
+      jamServer: "",
+      kelasList: [],
+      muridList: [],
+      muridMap: {},
+      sudahMap: {},
+      activeTab: "scan",
+      scanMode: "MASUK",
+      recentScans: [],
+      scanQueue: [],
+      isSendingScan: false,
+      lastScanned: {},
+      cameraStream: null,
+      cameraDevices: [],
+      currentDeviceIdx: 0,
+      scanTimer: null,
+      kehadiranData: null,
+      rekapData: null
+    };
+
+    const STORAGE_KEY = "absen_qr_token_v4";
+
+    function getSavedToken() {
+      try {
+        return sessionStorage.getItem(STORAGE_KEY) || "";
+      } catch (e) {
+        return "";
+      }
+    }
+
+    function setSavedToken(tok) {
+      try {
+        if (tok) sessionStorage.setItem(STORAGE_KEY, tok);
+        else sessionStorage.removeItem(STORAGE_KEY);
+      } catch (e) {}
+    }
+
+    function esc(str) {
+      if (str === null || str === undefined) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById("toastRoot");
+      el.textContent = msg;
+      el.classList.remove("hidden");
+      clearTimeout(el._t);
+      el._t = setTimeout(() => el.classList.add("hidden"), 3000);
+    }
+
+    function formatTanggalIndo(yyyyMmDd) {
+      if (!yyyyMmDd) return "";
+      const parts = yyyyMmDd.split("-").map(Number);
+      if (parts.length !== 3) return yyyyMmDd;
+      const d = new Date(parts[0], parts[1] - 1, parts[2]);
+      const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"][d.getDay()];
+      const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"][parts[1] - 1];
+      return `${hari}, ${parts[2]} ${bulan} ${parts[0]}`;
+    }
+
+    function getInitial(name) {
+      const s = String(name || "S").trim();
+      return s ? s.charAt(0).toUpperCase() : "S";
+    }
+
+    function renderLogoHtml(small) {
+      const cls = small ? "logo-wrap logo-sm" : "logo-wrap";
+      const initial = esc(getInitial(state.info && state.info.sekolah));
+      const logoUrl = state.info && state.info.logo ? String(state.info.logo).trim() : "";
+      if (logoUrl) {
+        return `<div class="${cls}">
+          <img src="${esc(logoUrl)}" referrerpolicy="no-referrer" alt="Logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+          <div class="logo-circle" style="display:none;">${initial}</div>
+        </div>`;
+      }
+      return `<div class="${cls}"><div class="logo-circle">${initial}</div></div>`;
+    }
+
+    const ICONS = {
+      scan: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>`,
+      list: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+      rekap: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
+      card: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="12" r="2"/><line x1="14" y1="10" x2="18" y2="10"/><line x1="14" y1="14" x2="18" y2="14"/></svg>`,
+      camera: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`
+    };
+
+    async function api(fn, args) {
+      try {
+        const r = await fetch(CONFIG.urlServer, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ fn: fn, args: args || [] }),
+          redirect: "follow"
+        });
+        return await r.json();
+      } catch (e) {
+        return { ok: false, jaringan: true, pesan: "Koneksi bermasalah. Coba lagi." };
+      }
+    }
+
+    function handleSessionExpired(res) {
+      if (res && res.kode === "SESI") {
+        stopCamera();
+        state.token = "";
+        setSavedToken("");
+        renderLogin("Sesi berakhir, silakan masuk lagi.");
+        return true;
+      }
+      return false;
+    }
+
+    function playBeep(isSuccess) {
+      try {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) return;
+        const ctx = new Ctx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = isSuccess ? 880 : 280;
+        gain.gain.setValueAtTime(0.18, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (isSuccess ? 0.14 : 0.28));
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + (isSuccess ? 0.15 : 0.3));
+      } catch (e) {}
+    }
+
+    // INIT
+    async function initApp() {
+      const app = document.getElementById("app");
+      if (!CONFIG.urlServer || CONFIG.urlServer === "TEMPEL_LINK_EXEC_DI_SINI" || !CONFIG.urlServer.startsWith("https://script.google.com/")) {
+        app.innerHTML = `<div class="center-screen"><div class="card login-box"><p style="font-weight:700;color:var(--alfa);">Link Apps Script belum diisi. Isi BAGIAN A di prompt, lalu buat ulang.</p></div></div>`;
+        return;
+      }
+
+      app.innerHTML = `<div class="center-screen"><div class="card login-box"><p style="font-weight:700;color:var(--text-muted);">Memuat...</p></div></div>`;
+      const res = await api("getInfoAwal", []);
+      if (!res || !res.ok) {
+        app.innerHTML = `<div class="center-screen"><div class="card login-box">
+          <p style="font-weight:700;margin-bottom:16px;">Gagal tersambung ke server</p>
+          <button class="btn-primary" onclick="initApp()">Coba Lagi</button>
+        </div></div>`;
+        return;
+      }
+
+      state.info = res;
+      document.title = CONFIG.namaAplikasi || "Absen QR Sekolah";
+      const saved = getSavedToken();
+      if (saved) {
+        state.token = saved;
+        await loadDataAwalAndStart();
+      } else {
+        renderLogin("");
+      }
+    }
+
+    function renderLogin(errMsg) {
+      const app = document.getElementById("app");
+      const info = state.info || {};
+      app.innerHTML = `
+        <div class="center-screen">
+          <div class="card login-box">
+            ${renderLogoHtml(false)}
+            <h1 style="font-size:22px;font-weight:800;margin-bottom:4px;">${esc(CONFIG.namaAplikasi)}</h1>
+            <p style="font-weight:700;color:var(--text);">${esc(info.sekolah)}</p>
+            <p style="font-size:14px;color:var(--text-muted);margin-bottom:20px;">Tahun Ajaran ${esc(info.tahun)}</p>
+            <form id="loginForm">
+              <div style="margin-bottom:12px;text-align:left;">
+                <label for="pwdInput" style="display:block;font-size:14px;font-weight:700;margin-bottom:6px;">Password Guru</label>
+                <input type="password" id="pwdInput" placeholder="Masukkan password" required autocomplete="current-password">
+              </div>
+              <p id="loginErr" style="color:var(--alfa);font-size:14px;font-weight:700;margin-bottom:12px;min-height:20px;">${esc(errMsg)}</p>
+              <button type="submit" id="loginBtn" class="btn-primary" style="width:100%;">Masuk</button>
+            </form>
+          </div>
+        </div>
+      `;
+      document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const pwd = document.getElementById("pwdInput").value;
+        const btn = document.getElementById("loginBtn");
+        const errEl = document.getElementById("loginErr");
+        if (!pwd) return;
+        btn.disabled = true;
+        btn.textContent = "Memuat...";
+        errEl.textContent = "";
+        const res = await api("loginGuru", [pwd]);
+        if (!res || !res.ok) {
+          btn.disabled = false;
+          btn.textContent = "Masuk";
+          errEl.textContent = (res && res.pesan) || "Password salah.";
+          return;
+        }
+        state.token = res.token;
+        setSavedToken(res.token);
+        await loadDataAwalAndStart();
+      });
+    }
+
+    async function loadDataAwalAndStart() {
+      const app = document.getElementById("app");
+      app.innerHTML = `<div class="center-screen"><div class="card login-box"><p style="font-weight:700;color:var(--text-muted);">Memuat...</p></div></div>`;
+      const res = await api("getDataAwal", [state.token]);
+      if (handleSessionExpired(res)) return;
+      if (!res || !res.ok) {
+        app.innerHTML = `<div class="center-screen"><div class="card login-box">
+          <p style="font-weight:700;margin-bottom:16px;">${esc((res && res.pesan) || "Gagal memuat data awal.")}</p>
+          <button class="btn-primary" onclick="loadDataAwalAndStart()">Coba Lagi</button>
+        </div></div>`;
+        return;
+      }
+
+      state.tanggalServer = res.tanggal;
+      state.jamServer = res.jam;
+      state.kelasList = res.kelas || [];
+      state.muridList = res.murid || [];
+      state.sudahMap = res.sudah || {};
+      state.muridMap = {};
+      state.muridList.forEach(m => { state.muridMap[String(m.nis)] = m; });
+
+      renderShell();
+      switchTab("scan");
+    }
+
+    function renderShell() {
+      const app = document.getElementById("app");
+      const warnHtml = state.info && state.info.passwordBawaan
+        ? `<div class="banner-warning">Password masih bawaan. Ganti PASSWORD_GURU di sheet Pengaturan.</div>`
+        : "";
+
+      app.innerHTML = `
+        <header class="app-header">
+          <div class="header-left">
+            ${renderLogoHtml(true)}
+            <div style="min-width:0;">
+              <div class="header-title">${esc(CONFIG.namaAplikasi)}</div>
+              <div class="header-date">${esc(formatTanggalIndo(state.tanggalServer))}</div>
+            </div>
+          </div>
+          <button class="btn-secondary btn-sm" id="logoutBtn">Keluar</button>
+        </header>
+        ${warnHtml}
+        <div class="app-body">
+          <nav class="sidebar">
+            <button class="nav-btn" data-tab="scan">${ICONS.scan}<span>Scan</span></button>
+            <button class="nav-btn" data-tab="kehadiran">${ICONS.list}<span>Kehadiran</span></button>
+            <button class="nav-btn" data-tab="rekap">${ICONS.rekap}<span>Rekap</span></button>
+            <button class="nav-btn" data-tab="kartu">${ICONS.card}<span>Kartu QR</span></button>
+          </nav>
+          <main class="main-content" id="mainView"></main>
+        </div>
+      `;
+
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        stopCamera();
+        state.token = "";
+        setSavedToken("");
+        renderLogin("");
+      });
+
+      document.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+      });
+    }
+
+    function switchTab(tab) {
+      if (state.activeTab === "scan" && tab !== "scan") {
+        stopCamera();
+      }
+      state.activeTab = tab;
+      document.querySelectorAll(".nav-btn").forEach(b => {
+        b.classList.toggle("active", b.dataset.tab === tab);
+      });
+      if (tab === "scan") renderScanPage();
+      else if (tab === "kehadiran") renderKehadiranPage();
+      else if (tab === "rekap") renderRekapPage();
+      else if (tab === "kartu") renderKartuPage();
+    }
+
+    // ==================== HALAMAN SCAN ====================
+    function renderScanPage() {
+      const view = document.getElementById("mainView");
+      const pakaiPulang = Boolean(state.info && state.info.pakaiPulang);
+      if (!pakaiPulang) state.scanMode = "MASUK";
+
+      const libMissing = (typeof jsQR === "undefined");
+      const libWarn = libMissing
+        ? `<div class="yellow-alert">Library pemindai QR gagal dimuat. Silakan gunakan fitur Ketik NIS di bawah.</div>`
+        : "";
+
+      view.innerHTML = `
+        <div class="card">
+          ${pakaiPulang ? `
+            <div class="mode-switch">
+              <button id="btnModeMasuk" class="${state.scanMode === "MASUK" ? "btn-primary" : "btn-secondary"}">Masuk</button>
+              <button id="btnModePulang" class="${state.scanMode === "PULANG" ? "btn-primary" : "btn-secondary"}">Pulang</button>
+            </div>
+          ` : ""}
+          <div class="mode-banner" id="modeLabel">MODE: ${state.scanMode}</div>
+          ${libWarn}
+          <div id="camErrorBox" class="yellow-alert hidden">
+            Kamera tidak bisa dibuka. Kalau ini pratinjau, klik tombol unduh lalu buka file-nya dengan Chrome dan izinkan kamera. Atau pakai Ketik NIS / Scan dari Foto.
+            <small id="camErrorCode"></small>
+          </div>
+          <div class="camera-box" id="cameraBox">
+            <button id="btnStartCam" class="btn-primary">${ICONS.camera}<span>Nyalakan Kamera</span></button>
+            <video id="camVideo" autoplay muted playsinline class="hidden"></video>
+            <div id="scanFrame" class="scan-frame hidden"></div>
+          </div>
+          <div class="camera-controls hidden" id="camControls">
+            <button id="btnSwitchCam" class="btn-secondary btn-sm hidden">Ganti Kamera</button>
+            <button id="btnStopCam" class="btn-danger btn-sm">Matikan Kamera</button>
+          </div>
+          <div id="scanResultArea"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid var(--border);font-weight:700;font-size:15px;">
+            <span>Sudah absen hari ini:</span>
+            <span id="scanCounter" style="color:var(--primary);font-weight:800;">0 dari 0 murid</span>
+          </div>
+        </div>
+
+        <div class="manual-grid">
+          <div class="card">
+            <h3 style="font-size:16px;font-weight:800;margin-bottom:10px;">Ketik NIS</h3>
+            <form id="manualNisForm" class="inline-form">
+              <input type="text" id="manualNisInput" placeholder="Ketik / scan barcode NIS..." autocomplete="off">
+              <button type="submit" class="btn-primary">Catat</button>
+            </form>
+          </div>
+          <div class="card">
+            <h3 style="font-size:16px;font-weight:800;margin-bottom:10px;">Scan dari Foto</h3>
+            <input type="file" id="photoQrInput" accept="image/*" capture="environment" style="padding:8px;">
+            <p id="photoQrStatus" style="font-size:13px;color:var(--alfa);font-weight:700;margin-top:6px;"></p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="font-size:16px;font-weight:800;margin-bottom:8px;">8 Pindaian Terakhir</h3>
+          <div id="recentScanList"><p style="color:var(--text-muted);font-size:14px;">Belum ada pindaian pada sesi ini.</p></div>
+        </div>
+      `;
+
+      updateScanCounter();
+      renderRecentScans();
+
+      if (pakaiPulang) {
+        document.getElementById("btnModeMasuk").addEventListener("click", () => setScanMode("MASUK"));
+        document.getElementById("btnModePulang").addEventListener("click", () => setScanMode("PULANG"));
+      }
+
+      document.getElementById("btnStartCam").addEventListener("click", () => startCamera());
+      document.getElementById("btnStopCam").addEventListener("click", () => stopCamera());
+      document.getElementById("btnSwitchCam").addEventListener("click", () => switchCamera());
+
+      document.getElementById("manualNisForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const inp = document.getElementById("manualNisInput");
+        const val = inp.value.trim();
+        inp.value = "";
+        inp.focus();
+        if (val) enqueueScan(val, true);
+      });
+
+      document.getElementById("photoQrInput").addEventListener("change", handlePhotoQr);
+    }
+
+    function setScanMode(mode) {
+      state.scanMode = mode;
+      const lbl = document.getElementById("modeLabel");
+      if (lbl) lbl.textContent = "MODE: " + mode;
+      const bM = document.getElementById("btnModeMasuk");
+      const bP = document.getElementById("btnModePulang");
+      if (bM && bP) {
+        bM.className = mode === "MASUK" ? "btn-primary" : "btn-secondary";
+        bP.className = mode === "PULANG" ? "btn-primary" : "btn-secondary";
+      }
+    }
+
+    async function startCamera(deviceId) {
+      stopCameraStreamsOnly();
+      const errBox = document.getElementById("camErrorBox");
+      const errCode = document.getElementById("camErrorCode");
+      let stream = null;
+
+      // 1) Hanya blok ini yang boleh menampilkan kotak kuning
+      try {
+        const constraints = deviceId
+          ? { video: { deviceId: { exact: deviceId } }, audio: false }
+          : { video: { facingMode: { ideal: "environment" } }, audio: false };
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+      } catch (e) {
+        if (errBox) {
+          errBox.classList.remove("hidden");
+          if (errCode) errCode.textContent = "Kode: " + (e && e.name ? e.name : "UnknownError");
+        }
+        return;
+      }
+
+      state.cameraStream = stream;
+      if (errBox) errBox.classList.add("hidden");
+
+      const video = document.getElementById("camVideo");
+      const btnStart = document.getElementById("btnStartCam");
+      const frame = document.getElementById("scanFrame");
+      const controls = document.getElementById("camControls");
+
+      if (btnStart) btnStart.classList.add("hidden");
+      if (frame) frame.classList.remove("hidden");
+      if (controls) controls.classList.remove("hidden");
+
+      // 2) video.play() di try/catch sendiri yang errornya diabaikan
+      if (video) {
+        video.classList.remove("hidden");
+        video.srcObject = stream;
+        try {
+          await video.play();
+        } catch (e) {}
+      }
+
+      // 3) Pembacaan QR dan enumerateDevices masing-masing di try/catch sendiri
+      try {
+        startQrLoop();
+      } catch (e) {
+        console.log("QR loop error:", e);
+      }
+
+      try {
+        if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+          const devs = await navigator.mediaDevices.enumerateDevices();
+          state.cameraDevices = devs.filter(d => d.kind === "videoinput");
+          const btnSwitch = document.getElementById("btnSwitchCam");
+          if (btnSwitch) {
+            if (state.cameraDevices.length > 1) btnSwitch.classList.remove("hidden");
+            else btnSwitch.classList.add("hidden");
+          }
+        }
+      } catch (e) {
+        console.log("Enumerate devices error:", e);
+      }
+    }
+
+    function stopCameraStreamsOnly() {
+      if (state.scanTimer) {
+        clearInterval(state.scanTimer);
+        state.scanTimer = null;
+      }
+      if (state.cameraStream) {
+        try {
+          state.cameraStream.getTracks().forEach(t => t.stop());
+        } catch (e) {}
+        state.cameraStream = null;
+      }
+    }
+
+    function stopCamera() {
+      stopCameraStreamsOnly();
+      const video = document.getElementById("camVideo");
+      const btnStart = document.getElementById("btnStartCam");
+      const frame = document.getElementById("scanFrame");
+      const controls = document.getElementById("camControls");
+      if (video) {
+        video.srcObject = null;
+        video.classList.add("hidden");
+      }
+      if (frame) frame.classList.add("hidden");
+      if (controls) controls.classList.add("hidden");
+      if (btnStart) btnStart.classList.remove("hidden");
+    }
+
+    function switchCamera() {
+      if (state.cameraDevices.length < 2) return;
+      state.currentDeviceIdx = (state.currentDeviceIdx + 1) % state.cameraDevices.length;
+      const nextDev = state.cameraDevices[state.currentDeviceIdx];
+      if (nextDev && nextDev.deviceId) {
+        startCamera(nextDev.deviceId);
+      }
+    }
+
+    function startQrLoop() {
+      if (state.scanTimer) clearInterval(state.scanTimer);
+      if (typeof jsQR === "undefined") return;
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+      state.scanTimer = setInterval(() => {
+        try {
+          const video = document.getElementById("camVideo");
+          if (!video || video.readyState < 2 || !video.videoWidth || !video.videoHeight) return;
+          const vw = video.videoWidth;
+          const vh = video.videoHeight;
+          const maxSide = 640;
+          const scale = Math.min(1, maxSide / Math.max(vw, vh));
+          const cw = Math.floor(vw * scale);
+          const ch = Math.floor(vh * scale);
+          canvas.width = cw;
+          canvas.height = ch;
+          ctx.drawImage(video, 0, 0, cw, ch);
+          const imgData = ctx.getImageData(0, 0, cw, ch);
+          const code = jsQR(imgData.data, cw, ch, { inversionAttempts: "dontInvert" });
+          if (code && code.data) {
+            const nis = String(code.data).trim();
+            if (nis) enqueueScan(nis, false);
+          }
+        } catch (e) {}
+      }, 125);
+    }
+
+    function handlePhotoQr(e) {
+      const file = e.target.files && e.target.files[0];
+      const statusEl = document.getElementById("photoQrStatus");
+      if (statusEl) statusEl.textContent = "";
+      if (!file) return;
+      if (typeof jsQR === "undefined") {
+        if (statusEl) statusEl.textContent = "Library QR tidak tersedia. Gunakan Ketik NIS.";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const img = new Image();
+        img.onload = function() {
+          try {
+            const maxSide = 1200;
+            const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+            const w = Math.floor(img.width * scale);
+            const h = Math.floor(img.height * scale);
+            const canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d", { willReadFrequently: true });
+            ctx.drawImage(img, 0, 0, w, h);
+            const imgData = ctx.getImageData(0, 0, w, h);
+            const code = jsQR(imgData.data, w, h, { inversionAttempts: "dontInvert" });
+            if (code && code.data && code.data.trim()) {
+              enqueueScan(code.data.trim(), true);
+            } else if (statusEl) {
+              statusEl.textContent = "QR tidak terbaca, coba foto lebih dekat.";
+            }
+          } catch (err) {
+            if (statusEl) statusEl.textContent = "QR tidak terbaca, coba foto lebih dekat.";
+          }
+          e.target.value = "";
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function enqueueScan(nis, bypassCooldown) {
+      const now = Date.now();
+      const key = state.scanMode + ":" + nis;
+      if (!bypassCooldown && state.lastScanned[key] && (now - state.lastScanned[key]) < 4000) {
+        return;
+      }
+      state.lastScanned[key] = now;
+      playBeep(true);
+
+      const murid = state.muridMap[nis];
+      renderScanResultCard({
+        type: "loading",
+        nama: murid ? murid.nama : "NIS: " + nis,
+        kelas: murid ? "Kelas " + murid.kelas : "",
+        msg: "Mencatat..."
+      });
+
+      state.scanQueue.push({ nis: nis, mode: state.scanMode });
+      processScanQueue();
+    }
+
+    async function processScanQueue() {
+      if (state.isSendingScan || state.scanQueue.length === 0) return;
+      state.isSendingScan = true;
+      const item = state.scanQueue.shift();
+
+      const res = await api("catatScan", [state.token, item.nis, item.mode]);
+      state.isSendingScan = false;
+
+      if (handleSessionExpired(res)) {
+        state.scanQueue = [];
+        return;
+      }
+
+      const murid = state.muridMap[item.nis];
+      const nama = (res && res.nama) || (murid && murid.nama) || ("NIS: " + item.nis);
+      const kelas = (res && res.kelas) || (murid && murid.kelas) || "";
+
+      if (res && res.jaringan) {
+        playBeep(false);
+        renderScanResultCard({
+          type: "error",
+          nama: nama,
+          kelas: kelas ? "Kelas " + kelas : "",
+          msg: res.pesan || "Koneksi bermasalah.",
+          retryItem: item
+        });
+      } else if (!res || !res.ok) {
+        playBeep(false);
+        renderScanResultCard({
+          type: "error",
+          nama: nama,
+          kelas: kelas ? "Kelas " + kelas : "",
+          msg: (res && res.pesan) || "Kartu tidak dikenal."
+        });
+      } else {
+        let cardType = "hadir";
+        let msgText = "";
+        let badgeStatus = res.status || "HADIR";
+        let timeStr = res.jamMasuk || "";
+
+        if (res.hasil === "PULANG") {
+          cardType = "pulang";
+          msgText = `Pulang, pukul ${res.jamPulang || ""}`;
+          timeStr = res.jamPulang || "";
+        } else if (res.hasil === "SUDAH") {
+          cardType = "sudah";
+          msgText = `Sudah tercatat${res.pesan ? " (" + res.pesan + ")" : ""}`;
+        } else if (res.status === "TERLAMBAT") {
+          cardType = "terlambat";
+          msgText = `Terlambat, pukul ${res.jamMasuk || ""}`;
+        } else {
+          cardType = "hadir";
+          msgText = `Hadir, pukul ${res.jamMasuk || ""}`;
+        }
+
+        renderScanResultCard({
+          type: cardType,
+          nama: nama,
+          kelas: kelas ? "Kelas " + kelas : "",
+          msg: msgText
+        });
+
+        // Perbarui data sudah di browser
+        const prev = state.sudahMap[item.nis] || {};
+        state.sudahMap[item.nis] = {
+          status: res.status || prev.status || "HADIR",
+          jamMasuk: res.jamMasuk || prev.jamMasuk || "",
+          jamPulang: res.jamPulang || prev.jamPulang || ""
+        };
+        updateScanCounter();
+
+        state.recentScans.unshift({
+          jam: timeStr || "-",
+          nama: nama,
+          kelas: kelas,
+          status: res.hasil === "PULANG" ? "PULANG" : badgeStatus
+        });
+        if (state.recentScans.length > 8) state.recentScans.pop();
+        renderRecentScans();
+      }
+
+      if (state.scanQueue.length > 0) {
+        processScanQueue();
+      }
+    }
+
+    function renderScanResultCard(info) {
+      const area = document.getElementById("scanResultArea");
+      if (!area) return;
+      const retryBtn = info.retryItem
+        ? `<div style="margin-top:10px;"><button id="retryScanBtn" class="btn-danger btn-sm">Coba Lagi</button></div>`
+        : "";
+      area.innerHTML = `
+        <div class="scan-result-card res-${info.type}">
+          <div class="scan-result-name">${esc(info.nama)}</div>
+          ${info.kelas ? `<div class="scan-result-sub">${esc(info.kelas)}</div>` : ""}
+          <div class="scan-result-msg">${esc(info.msg)}</div>
+          ${retryBtn}
+        </div>
+      `;
+      if (info.retryItem) {
+        document.getElementById("retryScanBtn").addEventListener("click", () => {
+          state.scanQueue.unshift(info.retryItem);
+          renderScanResultCard({ type: "loading", nama: info.nama, kelas: info.kelas, msg: "Mencatat..." });
+          processScanQueue();
+        });
+      }
+    }
+
+    function updateScanCounter() {
+      const el = document.getElementById("scanCounter");
+      if (!el) return;
+      const total = state.muridList.length;
+      let count = 0;
+      Object.keys(state.sudahMap).forEach(k => {
+        const st = state.sudahMap[k] && state.sudahMap[k].status;
+        if (st && st !== "BELUM") count++;
+      });
+      el.textContent = `${count} dari ${total} murid`;
+    }
+
+    function renderRecentScans() {
+      const el = document.getElementById("recentScanList");
+      if (!el) return;
+      if (state.recentScans.length === 0) {
+        el.innerHTML = `<p style="color:var(--text-muted);font-size:14px;">Belum ada pindaian pada sesi ini.</p>`;
+        return;
+      }
+      el.innerHTML = state.recentScans.map(item => {
+        const badgeCls = item.status === "PULANG" ? "badge-IZIN" : `badge-${esc(item.status)}`;
+        return `
+          <div class="recent-item">
+            <div>
+              <div style="font-weight:800;font-size:15px;">${esc(item.nama)}</div>
+              <div style="font-size:13px;color:var(--text-muted);">Kelas ${esc(item.kelas)} &bull; Pukul ${esc(item.jam)}</div>
+            </div>
+            <span class="badge ${badgeCls}">${esc(item.status)}</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // ==================== HALAMAN KEHADIRAN ====================
+    function renderKehadiranPage() {
+      const view = document.getElementById("mainView");
+      const defaultKelas = state.kelasList.length > 0 ? state.kelasList[0] : "SEMUA";
+      const kelasOpts = state.kelasList.map(k => `<option value="${esc(k)}">${esc(k)}</option>`).join("")
+        + `<option value="SEMUA">Semua</option>`;
+
+      view.innerHTML = `
+        <div class="card">
+          <div class="filter-bar">
+            <div class="filter-group">
+              <label for="khTanggal">Tanggal</label>
+              <input type="date" id="khTanggal" value="${esc(state.tanggalServer)}" max="${esc(state.tanggalServer)}">
+            </div>
+            <div class="filter-group">
+              <label for="khKelas">Kelas</label>
+              <select id="khKelas">${kelasOpts}</select>
+            </div>
+            <div>
+              <button id="khReloadBtn" class="btn-primary">Muat Ulang</button>
+            </div>
+          </div>
+          <div id="khContent"><p style="color:var(--text-muted);font-weight:700;">Memuat...</p></div>
+        </div>
+      `;
+
+      document.getElementById("khKelas").value = defaultKelas;
+      document.getElementById("khTanggal").addEventListener("change", loadKehadiran);
+      document.getElementById("khKelas").addEventListener("change", loadKehadiran);
+      document.getElementById("khReloadBtn").addEventListener("click", loadKehadiran);
+
+      loadKehadiran();
+    }
+
+    async function loadKehadiran() {
+      const tanggal = document.getElementById("khTanggal").value || state.tanggalServer;
+      const kelas = document.getElementById("khKelas").value || "SEMUA";
+      const btn = document.getElementById("khReloadBtn");
+      const content = document.getElementById("khContent");
+
+      btn.disabled = true;
+      btn.textContent = "Memuat...";
+      content.innerHTML = `<p style="color:var(--text-muted);font-weight:700;">Memuat...</p>`;
+
+      const res = await api("getKehadiran", [state.token, tanggal, kelas]);
+      btn.disabled = false;
+      btn.textContent = "Muat Ulang";
+
+      if (handleSessionExpired(res)) return;
+      if (!res || !res.ok) {
+        content.innerHTML = `<p style="color:var(--alfa);font-weight:700;">${esc((res && res.pesan) || "Gagal memuat data kehadiran.")}</p>`;
+        return;
+      }
+
+      state.kehadiranData = res;
+      const r = res.ringkas || { hadir: 0, terlambat: 0, izin: 0, sakit: 0, alfa: 0, belum: 0 };
+      const daftar = res.daftar || [];
+      const isSingleClass = kelas !== "SEMUA";
+      const belumCount = daftar.filter(d => d.status === "BELUM").length;
+
+      const actionButtons = isSingleClass ? `
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+          ${belumCount > 0 ? `<button id="btnTandaiAlfa" class="btn-danger btn-sm">Tandai yang belum sebagai Alfa (${belumCount})</button>` : ""}
+          <button id="btnSalinLaporan" class="btn-secondary btn-sm">Salin Laporan Harian</button>
+        </div>
+      ` : "";
+
+      const rowsHtml = daftar.length === 0
+        ? `<tr><td colspan="10" style="text-align:center;color:var(--text-muted);">Tidak ada data murid.</td></tr>`
+        : daftar.map((m, idx) => {
+            const waCell = buildWaCell(m, res.tanggal);
+            return `
+              <tr>
+                <td>${idx + 1}</td>
+                <td>${esc(m.nis)}</td>
+                <td style="font-weight:700;">${esc(m.nama)}</td>
+                <td>${esc(m.kelas)}</td>
+                <td><span class="badge badge-${esc(m.status)}">${esc(m.status)}</span></td>
+                <td>${esc(m.jamMasuk || "-")}</td>
+                <td>${esc(m.jamPulang || "-")}</td>
+                <td>${esc(m.keterangan || "-")}</td>
+                <td><button class="btn-secondary btn-sm btn-ubah" data-nis="${esc(m.nis)}">Ubah</button></td>
+                <td>${waCell}</td>
+              </tr>
+            `;
+          }).join("");
+
+      content.innerHTML = `
+        <div class="summary-grid">
+          <div class="stat-box" style="background:var(--hadir-bg);color:var(--hadir);"><div class="stat-num">${r.hadir || 0}</div><div class="stat-label">Hadir</div></div>
+          <div class="stat-box" style="background:var(--terlambat-bg);color:var(--terlambat);"><div class="stat-num">${r.terlambat || 0}</div><div class="stat-label">Terlambat</div></div>
+          <div class="stat-box" style="background:var(--izin-bg);color:var(--izin);"><div class="stat-num">${r.izin || 0}</div><div class="stat-label">Izin</div></div>
+          <div class="stat-box" style="background:var(--sakit-bg);color:var(--sakit);"><div class="stat-num">${r.sakit || 0}</div><div class="stat-label">Sakit</div></div>
+          <div class="stat-box" style="background:var(--alfa-bg);color:var(--alfa);"><div class="stat-num">${r.alfa || 0}</div><div class="stat-label">Alfa</div></div>
+          <div class="stat-box" style="background:var(--belum-bg);color:var(--belum);"><div class="stat-num">${r.belum || 0}</div><div class="stat-label">Belum</div></div>
+        </div>
+        ${actionButtons}
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>NIS</th>
+                <th>Nama</th>
+                <th>Kelas</th>
+                <th>Status</th>
+                <th>Masuk</th>
+                <th>Pulang</th>
+                <th>Keterangan</th>
+                <th>Aksi</th>
+                <th>WA Ortu</th>
+              </tr>
+            </thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+        </div>
+      `;
+
+      content.querySelectorAll(".btn-ubah").forEach(b => {
+        b.addEventListener("click", () => {
+          const murid = daftar.find(x => String(x.nis) === String(b.dataset.nis));
+          if (murid) openUbahModal(murid, res.tanggal);
+        });
+      });
+
+      content.querySelectorAll(".wa-btn").forEach(a => {
+        a.addEventListener("click", () => {
+          a.classList.add("opened");
+          a.textContent = "Dibuka";
+        });
+      });
+
+      const btnAlfa = document.getElementById("btnTandaiAlfa");
+      if (btnAlfa) {
+        btnAlfa.addEventListener("click", () => openConfirmAlfaModal(res.tanggal, kelas, belumCount));
+      }
+
+      const btnSalin = document.getElementById("btnSalinLaporan");
+      if (btnSalin) {
+        btnSalin.addEventListener("click", () => openLaporanModal(res.tanggal, kelas, r, daftar));
+      }
+    }
+
+    function buildWaCell(m, tanggal) {
+      const st = m.status;
+      if (st === "BELUM") return "";
+      const waHadir = Boolean(state.info && state.info.waHadir);
+      const eligible = (st === "TERLAMBAT" || st === "IZIN" || st === "SAKIT" || st === "ALFA" || (st === "HADIR" && waHadir));
+      if (!eligible) return "";
+
+      const waNum = String(m.wa || "").trim();
+      if (!waNum) {
+        return `<span style="font-size:12px;color:var(--text-muted);">No. WA belum diisi</span>`;
+      }
+
+      const info = state.info || {};
+      const salam = info.salam || "Assalamualaikum";
+      const ortu = m.ortu ? " " + m.ortu : "";
+      const tglIndo = formatTanggalIndo(tanggal);
+      let kalimat = "";
+
+      if (st === "HADIR") {
+        kalimat = `Kami informasikan, ananda *${m.nama}* kelas ${m.kelas} sudah hadir di sekolah pada ${tglIndo} pukul ${m.jamMasuk || "-"}.`;
+      } else if (st === "TERLAMBAT") {
+        kalimat = `Kami informasikan, ananda *${m.nama}* kelas ${m.kelas} datang terlambat pada ${tglIndo}, pukul ${m.jamMasuk || "-"}.`;
+      } else if (st === "IZIN") {
+        kalimat = `Kami informasikan, ananda *${m.nama}* kelas ${m.kelas} tercatat *izin* pada ${tglIndo}.`;
+      } else if (st === "SAKIT") {
+        kalimat = `Kami informasikan, ananda *${m.nama}* kelas ${m.kelas} tercatat *sakit* pada ${tglIndo}. Semoga lekas sembuh.`;
+      } else if (st === "ALFA") {
+        kalimat = `Kami informasikan, ananda *${m.nama}* kelas ${m.kelas} *belum hadir tanpa keterangan* pada ${tglIndo}. Mohon konfirmasi Bapak/Ibu.`;
+      }
+
+      const lines = [
+        `${salam}${ortu},`,
+        "",
+        kalimat
+      ];
+      if (m.keterangan && String(m.keterangan).trim()) {
+        lines.push(`Keterangan: ${String(m.keterangan).trim()}`);
+      }
+      lines.push("");
+      lines.push("Terima kasih.");
+      lines.push(`${info.pengirim || "Guru Piket"} - ${info.sekolah || ""}`);
+
+      const url = `https://wa.me/${encodeURIComponent(waNum)}?text=${encodeURIComponent(lines.join("\n"))}`;
+      return `<a href="${esc(url)}" target="_blank" rel="noopener" class="wa-btn">WA Ortu</a>`;
+    }
+
+    function openUbahModal(murid, tanggal) {
+      const root = document.getElementById("modalRoot");
+      let selectedStatus = murid.status === "BELUM" ? "HADIR" : murid.status;
+      const statuses = ["HADIR", "TERLAMBAT", "IZIN", "SAKIT", "ALFA"];
+
+      root.innerHTML = `
+        <div class="modal-backdrop">
+          <div class="modal-box">
+            <div class="modal-title">Ubah Status: ${esc(murid.nama)}</div>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">NIS ${esc(murid.nis)} &bull; Kelas ${esc(murid.kelas)}</p>
+            <div class="status-picker" id="statusPicker">
+              ${statuses.map(s => `<button type="button" class="status-opt ${s === selectedStatus ? "selected" : ""}" data-st="${s}">${s}</button>`).join("")}
+            </div>
+            <div style="margin-bottom:12px;">
+              <label for="ketInput" style="display:block;font-size:13px;font-weight:700;margin-bottom:4px;">Keterangan (opsional)</label>
+              <input type="text" id="ketInput" value="${esc(murid.keterangan || "")}" placeholder="Contoh: Surat dokter / izin keluarga">
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;flex-wrap:wrap;gap:8px;">
+              <a href="#" id="hapusCatatanLink" style="color:var(--alfa);font-size:14px;font-weight:700;text-decoration:underline;">Hapus catatan</a>
+              <div style="display:flex;gap:8px;">
+                <button type="button" id="batalModalBtn" class="btn-secondary btn-sm">Batal</button>
+                <button type="button" id="simpanStatusBtn" class="btn-primary btn-sm">Simpan</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      root.querySelectorAll(".status-opt").forEach(btn => {
+        btn.addEventListener("click", () => {
+          selectedStatus = btn.dataset.st;
+          root.querySelectorAll(".status-opt").forEach(b => b.classList.toggle("selected", b.dataset.st === selectedStatus));
+        });
+      });
+
+      const closeModal = () => { root.innerHTML = ""; };
+      document.getElementById("batalModalBtn").addEventListener("click", closeModal);
+
+      async function submitChange(stVal) {
+        const ket = document.getElementById("ketInput").value.trim();
+        const saveBtn = document.getElementById("simpanStatusBtn");
+        saveBtn.disabled = true;
+        saveBtn.textContent = "Memuat...";
+        const res = await api("ubahStatus", [state.token, tanggal, murid.nis, stVal, ket]);
+        if (handleSessionExpired(res)) {
+          closeModal();
+          return;
+        }
+        if (!res || !res.ok) {
+          saveBtn.disabled = false;
+          saveBtn.textContent = "Simpan";
+          showToast((res && res.pesan) || "Gagal menyimpan status.");
+          return;
+        }
+        closeModal();
+        showToast(res.pesan || "Status diperbarui.");
+        if (tanggal === state.tanggalServer) {
+          if (stVal === "HAPUS") delete state.sudahMap[murid.nis];
+          else state.sudahMap[murid.nis] = { status: stVal, jamMasuk: murid.jamMasuk || "", jamPulang: murid.jamPulang || "" };
+        }
+        loadKehadiran();
+      }
+
+      document.getElementById("simpanStatusBtn").addEventListener("click", () => submitChange(selectedStatus));
+      document.getElementById("hapusCatatanLink").addEventListener("click", (e) => {
+        e.preventDefault();
+        submitChange("HAPUS");
+      });
+    }
+
+    function openConfirmAlfaModal(tanggal, kelas, count) {
+      const root = document.getElementById("modalRoot");
+      root.innerHTML = `
+        <div class="modal-backdrop">
+          <div class="modal-box">
+            <div class="modal-title">Konfirmasi Tandai Alfa</div>
+            <p style="margin-bottom:16px;">Tandai <strong>${count} murid</strong> kelas ${esc(kelas)} yang belum hadir sebagai <strong>ALFA</strong>?</p>
+            <div class="modal-actions">
+              <button type="button" id="batalAlfaBtn" class="btn-secondary btn-sm">Batal</button>
+              <button type="button" id="yaAlfaBtn" class="btn-danger btn-sm">Ya, Tandai Alfa</button>
+            </div>
+          </div>
+        </div>
+      `;
+      const closeModal = () => { root.innerHTML = ""; };
+      document.getElementById("batalAlfaBtn").addEventListener("click", closeModal);
+      document.getElementById("yaAlfaBtn").addEventListener("click", async () => {
+        const btn = document.getElementById("yaAlfaBtn");
+        btn.disabled = true;
+        btn.textContent = "Memuat...";
+        const res = await api("tandaiAlfa", [state.token, tanggal, kelas]);
+        if (handleSessionExpired(res)) {
+          closeModal();
+          return;
+        }
+        closeModal();
+        if (!res || !res.ok) {
+          showToast((res && res.pesan) || "Gagal menandai Alfa.");
+          return;
+        }
+        showToast(`${res.jumlah || count} murid ditandai Alfa.`);
+        loadKehadiran();
+      });
+    }
+
+    function openLaporanModal(tanggal, kelas, ringkas, daftar) {
+      const info = state.info || {};
+      const tglIndo = formatTanggalIndo(tanggal);
+      const tidakHadir = daftar.filter(m => m.status === "IZIN" || m.status === "SAKIT" || m.status === "ALFA");
+      const terlambat = daftar.filter(m => m.status === "TERLAMBAT");
+
+      const lines = [
+        `Laporan Kehadiran Kelas ${kelas}`,
+        tglIndo,
+        "",
+        `Hadir: ${ringkas.hadir || 0}`,
+        `Terlambat: ${ringkas.terlambat || 0}`,
+        `Izin: ${ringkas.izin || 0}`,
+        `Sakit: ${ringkas.sakit || 0}`,
+        `Alfa: ${ringkas.alfa || 0}`,
+        `Belum: ${ringkas.belum || 0}`,
+        ""
+      ];
+
+      lines.push("Murid Tidak Hadir:");
+      if (tidakHadir.length === 0) {
+        lines.push("- Nihil");
+      } else {
+        tidakHadir.forEach((m, i) => {
+          const ket = m.keterangan ? ` (${m.keterangan})` : "";
+          lines.push(`${i + 1}. ${m.nama} - ${m.status}${ket}`);
+        });
+      }
+
+      lines.push("");
+      lines.push("Murid Terlambat:");
+      if (terlambat.length === 0) {
+        lines.push("- Nihil");
+      } else {
+        terlambat.forEach((m, i) => {
+          lines.push(`${i + 1}. ${m.nama} (${m.jamMasuk || "-"})`);
+        });
+      }
+
+      lines.push("");
+      lines.push(`${info.pengirim || "Guru Piket"} - ${info.sekolah || ""}`);
+      const textLaporan = lines.join("\n");
+
+      const root = document.getElementById("modalRoot");
+      root.innerHTML = `
+        <div class="modal-backdrop">
+          <div class="modal-box">
+            <div class="modal-title">Salin Laporan Harian</div>
+            <textarea id="laporanTextArea" rows="12" readonly style="font-size:13px;line-height:1.45;">${esc(textLaporan)}</textarea>
+            <div class="modal-actions">
+              <button type="button" id="tutupLapBtn" class="btn-secondary btn-sm">Tutup</button>
+              <button type="button" id="salinLapBtn" class="btn-primary btn-sm">Salin</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("tutupLapBtn").addEventListener("click", () => { root.innerHTML = ""; });
+      document.getElementById("salinLapBtn").addEventListener("click", async () => {
+        const ta = document.getElementById("laporanTextArea");
+        try {
+          await navigator.clipboard.writeText(ta.value);
+          showToast("Laporan berhasil disalin.");
+        } catch (e) {
+          ta.select();
+          try {
+            document.execCommand("copy");
+            showToast("Laporan berhasil disalin.");
+          } catch (err) {
+            showToast("Silakan salin teks secara manual.");
+          }
+        }
+      });
+    }
+
+    // ==================== HALAMAN REKAP ====================
+    function renderRekapPage() {
+      const view = document.getElementById("mainView");
+      const defaultMonth = (state.tanggalServer || "").slice(0, 7);
+      const defaultKelas = state.kelasList.length > 0 ? state.kelasList[0] : "SEMUA";
+      const kelasOpts = state.kelasList.map(k => `<option value="${esc(k)}">${esc(k)}</option>`).join("")
+        + `<option value="SEMUA">Semua</option>`;
+
+      view.innerHTML = `
+        <div class="card">
+          <div class="filter-bar">
+            <div class="filter-group">
+              <label for="rkBulan">Bulan</label>
+              <input type="month" id="rkBulan" value="${esc(defaultMonth)}">
+            </div>
+            <div class="filter-group">
+              <label for="rkKelas">Kelas</label>
+              <select id="rkKelas">${kelasOpts}</select>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button id="rkSimpanBtn" class="btn-primary btn-sm">Simpan ke Sheet</button>
+              <button id="rkCsvBtn" class="btn-secondary btn-sm">Unduh Rekap (CSV)</button>
+            </div>
+          </div>
+          <div id="rkContent"><p style="color:var(--text-muted);font-weight:700;">Memuat...</p></div>
+        </div>
+      `;
+
+      document.getElementById("rkKelas").value = defaultKelas;
+      document.getElementById("rkBulan").addEventListener("change", loadRekap);
+      document.getElementById("rkKelas").addEventListener("change", loadRekap);
+
+      document.getElementById("rkSimpanBtn").addEventListener("click", async () => {
+        const bulan = document.getElementById("rkBulan").value;
+        const kelas = document.getElementById("rkKelas").value;
+        const btn = document.getElementById("rkSimpanBtn");
+        btn.disabled = true;
+        btn.textContent = "Memuat...";
+        const res = await api("simpanRekap", [state.token, bulan, kelas]);
+        btn.disabled = false;
+        btn.textContent = "Simpan ke Sheet";
+        if (handleSessionExpired(res)) return;
+        showToast((res && res.pesan) || (res && res.ok ? "Rekap disimpan ke Sheet." : "Gagal menyimpan rekap."));
+      });
+
+      document.getElementById("rkCsvBtn").addEventListener("click", downloadRekapCsv);
+
+      loadRekap();
+    }
+
+    async function loadRekap() {
+      const bulan = document.getElementById("rkBulan").value;
+      const kelas = document.getElementById("rkKelas").value;
+      const content = document.getElementById("rkContent");
+      content.innerHTML = `<p style="color:var(--text-muted);font-weight:700;">Memuat...</p>`;
+
+      const res = await api("getRekap", [state.token, bulan, kelas]);
+      if (handleSessionExpired(res)) return;
+      if (!res || !res.ok) {
+        content.innerHTML = `<p style="color:var(--alfa);font-weight:700;">${esc((res && res.pesan) || "Gagal memuat rekap.")}</p>`;
+        return;
+      }
+
+      state.rekapData = res;
+      const baris = res.baris || [];
+      let totH = 0, totT = 0, totI = 0, totS = 0, totA = 0;
+      const perluPerhatian = [];
+
+      const rowsHtml = baris.map((b, i) => {
+        const h = Number(b.hadir || 0);
+        const t = Number(b.terlambat || 0);
+        const iz = Number(b.izin || 0);
+        const s = Number(b.sakit || 0);
+        const a = Number(b.alfa || 0);
+        const p = Number(b.persen || 0);
+        totH += h; totT += t; totI += iz; totS += s; totA += a;
+
+        const totalCat = h + t + iz + s + a;
+        const isLow = totalCat > 0 && p < 75;
+        if (isLow) perluPerhatian.push(b.nama);
+
+        return `
+          <tr class="${isLow ? "row-warning" : ""}">
+            <td>${i + 1}</td>
+            <td>${esc(b.nis)}</td>
+            <td style="font-weight:700;">${esc(b.nama)}</td>
+            <td>${h}</td>
+            <td>${t}</td>
+            <td>${iz}</td>
+            <td>${s}</td>
+            <td>${a}</td>
+            <td style="font-weight:800;">${p}%</td>
+          </tr>
+        `;
+      }).join("");
+
+      const warnHtml = perluPerhatian.length > 0
+        ? `<div class="yellow-alert" style="margin-bottom:12px;">Perlu perhatian: ${perluPerhatian.length} murid (${esc(perluPerhatian.join(", "))})</div>`
+        : "";
+
+      content.innerHTML = `
+        <p style="font-weight:800;margin-bottom:10px;">Hari tercatat: ${esc(res.hariTercatat || 0)}</p>
+        ${warnHtml}
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>NIS</th>
+                <th>Nama</th>
+                <th>Hadir</th>
+                <th>Terlambat</th>
+                <th>Izin</th>
+                <th>Sakit</th>
+                <th>Alfa</th>
+                <th>Persen Hadir</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml || `<tr><td colspan="9" style="text-align:center;color:var(--text-muted);">Belum ada data rekap.</td></tr>`}
+              ${baris.length > 0 ? `
+                <tr style="background:#F8FAFC;font-weight:800;">
+                  <td colspan="3">Jumlah</td>
+                  <td>${totH}</td>
+                  <td>${totT}</td>
+                  <td>${totI}</td>
+                  <td>${totS}</td>
+                  <td>${totA}</td>
+                  <td>-</td>
+                </tr>
+              ` : ""}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function downloadRekapCsv() {
+      if (!state.rekapData || !state.rekapData.baris) {
+        showToast("Data rekap belum tersedia.");
+        return;
+      }
+      const bulan = document.getElementById("rkBulan").value || "rekap";
+      const kelas = document.getElementById("rkKelas").value || "SEMUA";
+      const lines = ["No;NIS;Nama;Kelas;Hadir;Terlambat;Izin;Sakit;Alfa;Persen Hadir"];
+      state.rekapData.baris.forEach((b, i) => {
+        const safeNama = `"${String(b.nama || "").replace(/"/g, '""')}"`;
+        lines.push(`${i + 1};${b.nis};${safeNama};${b.kelas};${b.hadir || 0};${b.terlambat || 0};${b.izin || 0};${b.sakit || 0};${b.alfa || 0};${b.persen || 0}%`);
+      });
+      const blob = new Blob(["\uFEFF" + lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Rekap_${kelas}_${bulan}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // ==================== HALAMAN KARTU QR ====================
+    function renderKartuPage() {
+      const view = document.getElementById("mainView");
+      const defaultKelas = state.kelasList.length > 0 ? state.kelasList[0] : "SEMUA";
+      const kelasOpts = state.kelasList.map(k => `<option value="${esc(k)}">${esc(k)}</option>`).join("")
+        + `<option value="SEMUA">Semua</option>`;
+
+      view.innerHTML = `
+        <div class="card no-print">
+          <div class="filter-bar">
+            <div class="filter-group">
+              <label for="krKelas">Kelas</label>
+              <select id="krKelas">${kelasOpts}</select>
+            </div>
+            <div class="filter-group">
+              <label for="krCari">Cari Nama</label>
+              <input type="text" id="krCari" placeholder="Ketik nama murid...">
+            </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
+            <button id="btnUnduhLembar" class="btn-primary btn-sm">Unduh Kartu Kelas Ini (siap cetak)</button>
+            <button id="btnPrintKartu" class="btn-secondary btn-sm">Cetak</button>
+          </div>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:8px;">Kalau Cetak tidak merespons, pakai Unduh Kartu lalu cetak gambarnya.</p>
+        </div>
+        <div id="kartuGrid" class="qr-grid"></div>
+      `;
+
+      document.getElementById("krKelas").value = defaultKelas;
+      document.getElementById("krKelas").addEventListener("change", renderKartuGrid);
+      document.getElementById("krCari").addEventListener("input", renderKartuGrid);
+      document.getElementById("btnUnduhLembar").addEventListener("click", downloadA4Sheets);
+      document.getElementById("btnPrintKartu").addEventListener("click", () => {
+        try {
+          window.print();
+        } catch (e) {
+          showToast("Gunakan tombol Unduh Kartu lalu cetak gambarnya.");
+        }
+      });
+
+      renderKartuGrid();
+    }
+
+    function getFilteredStudents() {
+      const kelas = document.getElementById("krKelas").value;
+      const q = document.getElementById("krCari").value.trim().toLowerCase();
+      return state.muridList.filter(m => {
+        const matchKelas = (kelas === "SEMUA" || String(m.kelas) === String(kelas));
+        const matchName = (!q || String(m.nama).toLowerCase().includes(q) || String(m.nis).toLowerCase().includes(q));
+        return matchKelas && matchName;
+      });
+    }
+
+    function renderKartuGrid() {
+      const grid = document.getElementById("kartuGrid");
+      const list = getFilteredStudents();
+      const info = state.info || {};
+      const initial = esc(getInitial(info.sekolah));
+      const logoUrl = info.logo ? String(info.logo).trim() : "";
+
+      if (list.length === 0) {
+        grid.innerHTML = `<div class="card"><p style="color:var(--text-muted);">Tidak ada murid ditemukan.</p></div>`;
+        return;
+      }
+
+      const hasQrLib = (typeof qrcode !== "undefined");
+
+      grid.innerHTML = list.map(m => {
+        let qrImgHtml = `<span style="font-size:11px;color:var(--alfa);">QR Error</span>`;
+        if (hasQrLib) {
+          try {
+            const q = qrcode(0, "M");
+            q.addData(String(m.nis));
+            q.make();
+            const dataUrl = q.createDataURL(6, 4);
+            qrImgHtml = `<img src="${dataUrl}" alt="QR ${esc(m.nis)}">`;
+          } catch (e) {}
+        }
+
+        const cardLogoHtml = logoUrl
+          ? `<div class="id-card-logo"><img src="${esc(logoUrl)}" referrerpolicy="no-referrer" alt="Logo" onerror="this.style.display='none';this.parentNode.textContent='${initial}';"></div>`
+          : `<div class="id-card-logo">${initial}</div>`;
+
+        return `
+          <div class="student-card-wrap">
+            <div class="id-card">
+              <div class="id-card-header">
+                ${cardLogoHtml}
+                <div style="min-width:0;">
+                  <div class="id-card-school">${esc(info.sekolah)}</div>
+                  <div class="id-card-addr">${esc(info.alamat || "")}</div>
+                </div>
+              </div>
+              <div class="id-card-body">
+                <div class="id-card-info">
+                  <div class="id-card-tag">KARTU ABSEN MURID</div>
+                  <div class="id-card-name">${esc(m.nama)}</div>
+                  <div class="id-card-meta">NIS: ${esc(m.nis)} &bull; Kelas ${esc(m.kelas)}</div>
+                  <div class="id-card-meta">TA ${esc(info.tahun || "")}</div>
+                </div>
+                <div class="id-card-qr">${qrImgHtml}</div>
+              </div>
+            </div>
+            <div class="card-action-link" style="text-align:right;">
+              <a href="#" class="unduh-qr-link" data-nis="${esc(m.nis)}" data-nama="${esc(m.nama)}" style="font-size:13px;font-weight:700;color:var(--primary);text-decoration:none;">Unduh QR</a>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      grid.querySelectorAll(".unduh-qr-link").forEach(a => {
+        a.addEventListener("click", (e) => {
+          e.preventDefault();
+          downloadSingleQrPng(a.dataset.nis, a.dataset.nama);
+        });
+      });
+    }
+
+    function drawSharpQrOnCanvas(ctx, text, x, y, sizePx) {
+      const q = qrcode(0, "M");
+      q.addData(String(text));
+      q.make();
+      const count = q.getModuleCount();
+      const quiet = 4;
+      const totalModules = count + quiet * 2;
+      const modSize = sizePx / totalModules;
+
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(x, y, sizePx, sizePx);
+
+      ctx.fillStyle = "#000000";
+      for (let r = 0; r < count; r++) {
+        for (let c = 0; c < count; c++) {
+          if (q.isDark(r, c)) {
+            const px = Math.floor(x + (c + quiet) * modSize);
+            const py = Math.floor(y + (r + quiet) * modSize);
+            const pw = Math.ceil(modSize);
+            const ph = Math.ceil(modSize);
+            ctx.fillRect(px, py, pw, ph);
+          }
+        }
+      }
+    }
+
+    function downloadSingleQrPng(nis, nama) {
+      if (typeof qrcode === "undefined") {
+        showToast("Library pembuat QR gagal dimuat.");
+        return;
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = 600;
+      canvas.height = 600;
+      const ctx = canvas.getContext("2d");
+      drawSharpQrOnCanvas(ctx, nis, 0, 0, 600);
+
+      const safeNama = String(nama || "murid").replace(/[^a-zA-Z0-9_-]/g, "_");
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `QR_${nis}_${safeNama}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, "image/png");
+    }
+
+    function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
+      const words = String(text || "").split(" ");
+      let line = "";
+      let lineCount = 0;
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + " ";
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && n > 0) {
+          ctx.fillText(line.trim(), x, y);
+          line = words[n] + " ";
+          y += lineHeight;
+          lineCount++;
+          if (lineCount >= maxLines) return y;
+        } else {
+          line = testLine;
+        }
+      }
+      if (lineCount < maxLines) {
+        ctx.fillText(line.trim(), x, y);
+        y += lineHeight;
+      }
+      return y;
+    }
+
+    async function downloadA4Sheets() {
+      if (typeof qrcode === "undefined") {
+        showToast("Library pembuat QR gagal dimuat.");
+        return;
+      }
+      const list = getFilteredStudents();
+      if (list.length === 0) {
+        showToast("Tidak ada murid untuk diunduh.");
+        return;
+      }
+
+      const kelas = document.getElementById("krKelas").value || "Kelas";
+      const info = state.info || {};
+      const primaryColor = getComputedStyle(document.documentElement).getPropertyValue("--primary").trim() || "#1E8E5A";
+      const initial = getInitial(info.sekolah);
+
+      const perSheet = 8;
+      const totalSheets = Math.ceil(list.length / perSheet);
+      const cardW = 1016;
+      const cardH = 638;
+      const margin = 150;
+      const gapX = 2480 - (margin * 2) - (cardW * 2); // 148px
+      const gapY = Math.floor((3508 - (margin * 2) - (cardH * 4)) / 3); // 218px
+
+      for (let s = 0; s < totalSheets; s++) {
+        const canvas = document.createElement("canvas");
+        canvas.width = 2480;
+        canvas.height = 3508;
+        const ctx = canvas.getContext("2d");
+
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(0, 0, 2480, 3508);
+
+        const slice = list.slice(s * perSheet, (s + 1) * perSheet);
+        slice.forEach((m, idx) => {
+          const col = idx % 2;
+          const row = Math.floor(idx / 2);
+          const x = margin + col * (cardW + gapX);
+          const y = margin + row * (cardH + gapY);
+
+          // Kartu dasar + garis tepi abu tipis panduan gunting
+          ctx.fillStyle = "#FFFFFF";
+          ctx.fillRect(x, y, cardW, cardH);
+          ctx.strokeStyle = "#CBD5E1";
+          ctx.lineWidth = 3;
+          ctx.strokeRect(x, y, cardW, cardH);
+
+          // Header berwarna utama
+          const headerH = 148;
+          ctx.fillStyle = primaryColor;
+          ctx.fillRect(x, y, cardW, headerH);
+
+          // Lingkaran huruf pertama nama sekolah
+          const cx = x + 76;
+          const cy = y + 74;
+          ctx.fillStyle = "#FFFFFF";
+          ctx.beginPath();
+          ctx.arc(cx, cy, 44, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = primaryColor;
+          ctx.font = "bold 46px sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(initial, cx, cy + 2);
+
+          // Nama sekolah & alamat
+          ctx.textAlign = "left";
+          ctx.textBaseline = "alphabetic";
+          ctx.fillStyle = "#FFFFFF";
+          ctx.font = "bold 34px sans-serif";
+          ctx.fillText(String(info.sekolah || "").slice(0, 36), x + 142, y + 68);
+
+          ctx.font = "24px sans-serif";
+          ctx.fillStyle = "rgba(255,255,255,0.92)";
+          ctx.fillText(String(info.alamat || "").slice(0, 48), x + 142, y + 108);
+
+          // Konten kiri
+          const contentY = y + headerH + 56;
+          ctx.fillStyle = primaryColor;
+          ctx.font = "bold 24px sans-serif";
+          ctx.fillText("KARTU ABSEN MURID", x + 44, contentY);
+
+          ctx.fillStyle = "#1F2A44";
+          ctx.font = "bold 42px sans-serif";
+          const nextY = wrapCanvasText(ctx, m.nama, x + 44, contentY + 62, 570, 52, 2);
+
+          ctx.fillStyle = "#5B6785";
+          ctx.font = "600 30px sans-serif";
+          ctx.fillText(`NIS: ${m.nis}`, x + 44, nextY + 26);
+          ctx.fillText(`Kelas: ${m.kelas}`, x + 44, nextY + 70);
+          ctx.fillText(`TA ${info.tahun || ""}`, x + 44, nextY + 114);
+
+          // QR di kanan (300x300, zona tenang 4 modul)
+          const qrX = x + cardW - 344;
+          const qrY = y + headerH + 95;
+          drawSharpQrOnCanvas(ctx, m.nis, qrX, qrY, 300);
+          ctx.strokeStyle = "#E2E8F0";
+          ctx.lineWidth = 2;
+          ctx.strokeRect(qrX, qrY, 300, 300);
+        });
+
+        await new Promise((resolve) => {
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `Kartu_${kelas}_${s + 1}.png`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              setTimeout(() => URL.revokeObjectURL(url), 1000);
+            }
+            setTimeout(resolve, 350);
+          }, "image/png");
+        });
+      }
+      showToast(`${totalSheets} lembar kartu berhasil diunduh.`);
+    }
+
+    initApp();
+  </script>
+</body>
+</html>
